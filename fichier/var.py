@@ -1,7 +1,7 @@
 from tkinter import * 
 from tkinter import ttk
 
-version = "1.2.8"
+version = "1.3.0"
 site = 'http://prog.dynag.co'
 ###########   Couleurs ##########
 bg_frame_haut = "#81BEF7"
@@ -9,7 +9,7 @@ bg_frame_mid = "#A9D0F5"
 bg_frame_droit = "#A9D0F5"
 bg_but = "#81BEF7"
 
-
+liste_maj = {}
 
 couleur_vert = "#baf595"
 couleur_jaune = "#fffd6a"

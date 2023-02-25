@@ -339,7 +339,7 @@ if __name__ == "__main__":
 ##### Frame centrale
     tab_ip_scroll = Scrollbar(frame2)
     tab_ip_scroll.pack(side=RIGHT, fill=Y)
-    columns = ('IP', 'Nom', 'mac', 'port', 'Latence', 'Etat', 'Suivi')
+    columns = ('IP', 'Nom', 'mac', 'port', 'Latence', 'Suivi')
     var.tab_ip = ttk.Treeview(frame2, yscrollcommand=tab_ip_scroll.set, selectmode="extended", columns=columns,
                               show='headings')
     for col in columns:
@@ -350,7 +350,6 @@ if __name__ == "__main__":
     var.tab_ip.column("mac", anchor=CENTER, stretch=TRUE, width=80)
     var.tab_ip.column("port", anchor=CENTER, stretch=TRUE, width=80)
     var.tab_ip.column("Latence", anchor=CENTER, width=50, stretch=TRUE)
-    var.tab_ip.column("Etat", anchor=CENTER, width=0, stretch=FALSE)
     var.tab_ip.column("Suivi", anchor=CENTER, width=30, stretch=FALSE)
     var.tab_ip.bind('<ButtonRelease-1>', item_selected)
     var.tab_ip.bind('<3>', right_clic)

@@ -11,7 +11,7 @@ import fichier.design as design
 
 def getxml():
     try:
-        url = var.site+"/PyngOuin/apropos.xml"
+        url = var.site+"/PyngOuin/changelog.xml"
         http = urllib3.PoolManager(cert_reqs='CERT_NONE')
         response = http.request('GET', url)
         try:
@@ -27,14 +27,14 @@ def data():
         xml = getxml()
         data = ""
         for val in xml["changelog"]["version"]:
-            data = data+ val["versio"] + "\n\n\n"
+            data = data+"Version : "+val["versio"]+"\n"+val["change"]+"\n \n"
         return data
     except Exception as inst:
         design.logs("fen_a_propos -" + str(inst))
 
 def main():
     fenetre1 = Toplevel()
-    fenetre1.title("A Propos")
+    fenetre1.title("Changelog")
     fenetre1.geometry("400x400")
     frame_haut = Frame(master=fenetre1, bg=var.bg_frame_mid, padx=5, pady=5)
     frame_haut.pack(fill=X)

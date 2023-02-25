@@ -44,7 +44,7 @@ def threadIp(ip, tout, i, hote, port):
                 port =""
                 mac = ""
             try:
-                var.tab_ip.insert(parent='', index=i, iid=ip, tag=ip, values=(ip, nom[0] ,mac ,port ,"", result))
+                var.tab_ip.insert(parent='', index=i, iid=ip, tag=ip, values=(ip, nom[0] ,mac ,port ,""))
             except:
                 pass
         else:
@@ -59,7 +59,7 @@ def threadIp(ip, tout, i, hote, port):
                     pass
                 port = fct_ip.check_port(ip, port)
                 try:
-                    var.tab_ip.insert(parent='', index=i, tag=ip, iid=ip, values=(ip, nom[0] ,mac ,port ,"", result))
+                    var.tab_ip.insert(parent='', index=i, tag=ip, iid=ip, values=(ip, nom[0] ,mac ,port ,""))
                 except:
                     pass
         if result == "OK":

@@ -59,13 +59,14 @@ def rac_f(ev=None):
 
 def fenAPropos():
 	try:
-		thread_fen.main("apropos")
+		import fichier.fen_a_propos as apropos
+		apropos.main()
 	except Exception as e:
 		logs("design - " + str(e))
 
 def fenAChangelog():
 	try:
-		import fichier.fen_a_propos as apropos
+		import fichier.fen_changelog as apropos
 		apropos.main()
 	except Exception as e:
 		logs("design - " + str(e))

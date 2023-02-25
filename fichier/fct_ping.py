@@ -23,6 +23,7 @@ import fichier.design as design
 *********************************************************************************************
 """
 q = Queue()
+qq = Queue()
 ###########################################################################################
 #####				Incrémentation de la perte sur la liste							  #####
 ###########################################################################################
@@ -34,9 +35,22 @@ def list_increment(liste, ip):
 			else:
 				liste[ip] = liste[ip]
 		else:
+
 			liste[ip]= 1
 	except Exception as inst:
 		design.logs("ping-"+str(inst))
+
+def maj_liste():
+	while True:
+		try:
+			if var.ipPing == 1:
+				f = qq.get()
+				f()
+			else:
+				print("stop")
+				break
+		except Exception as inst:
+			design.logs("ping-"+str(inst))
 
 ###########################################################################################
 #####				Marqué l'hôte comme revenu sur les listes						  #####
@@ -82,15 +96,14 @@ def test_ping(ip):
 
 		date = str(datetime.datetime.now())
 		message = date + " || "
-		hs = valeur[5]
 		if var.ipPing == 0:
 			return
 		if result.rtt_avg_ms == int(2000):
 			message = message + "HS || 200"
 
 			try:
-				var.tab_ip.tag_configure(tagname=ip, background=var.couleur_noir)
-				var.tab_ip.set(ip, column="Latence", value="")
+				qq.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=var.couleur_noir))
+				qq.put(lambda: var.tab_ip.set(ip, column="Latence", value=""))
 			except TclError as inst:
 				design.logs("ping-" + str(inst))
 				pass
@@ -132,8 +145,8 @@ def test_ping(ip):
 			except Exception as inst:
 				design.logs("ping-"+str(inst))
 			try:
-				var.tab_ip.tag_configure(tagname=ip, background=color)
-				var.tab_ip.set(ip, column="Latence", value=ttot)
+				qq.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=color))
+				qq.put(lambda: var.tab_ip.set(ip, column="Latence", value=ttot))
 			except TclError as inst:
 				design.logs("ping-" + str(inst))
 				pass
@@ -227,7 +240,7 @@ def lancerping(fenetre1):
 			threading.Thread(target=thread_recap_mail.main).start()
 		if var.lat == 1:
 			threading.Thread(target=fct_ip.suiviLat, args=()).start()
-		#threading.Thread(target=updateTree, args=()).start()
+		threading.Thread(target=maj_liste, args=()).start()
 	else:
 		var.but_lancer_ping = Button(fenetre1, text='Start', padx=15, bg=var.couleur_rouge, command=lambda: lancerping(fenetre1), height=3).grid(row=0, column=1, pady=5)
 		var.ipPing = 0
