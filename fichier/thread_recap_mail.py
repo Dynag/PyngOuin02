@@ -43,18 +43,18 @@ def prepaMail():
 	Bonjour,<br><br>
 	Voici le compte rendu des équipements sous surveillance : <br><br>
 	<table width=50%><tr><td bgcolor="""+var.bg_frame_haut+""">Nom</td><td bgcolor="""+var.bg_frame_haut+""">IP</td>
-	<td  bgcolor="""+var.bg_frame_haut+""">Latence<td bgcolor="""+var.bg_frame_haut+"""> Etat</tD></tr>
+	<td  bgcolor="""+var.bg_frame_haut+""">Latence</tr>
 	"""
 	for row_id in var.tab_ip.get_children():
 		result = var.tab_ip.item(row_id)["values"]
 		color = ""
-		if result[5] == "HS":
-			color = var.couleur_rouge
+		if result[4] == "":
+			color = var.couleur_noir
 		else:
 			color = var.couleur_vert
 		message = message + """\
 		<tr><td bgcolor="""+color+""">"""+result[1]+"""</td><td bgcolor="""+color+""">"""+result[0]+"""</td>
-		<td bgcolor="""+color+""">"""+result[4]+"""</td><td bgcolor="""+color+""">"""+result[5]+"""</td></tr>
+		<td bgcolor="""+color+""">"""+result[4]+"""</td></tr>
 		"""
 	message = message + """\
 	</table><br><br>

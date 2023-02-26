@@ -4,6 +4,7 @@ import fichier.design as design
 import fichier.fct_thread_mail as fct_thread_mail
 import fichier.thread_telegram as thread_telegram
 import fichier.var as var
+from queue import Queue
 """
 *********************************************************************************************
 *********************************************************************************************
@@ -11,10 +12,24 @@ import fichier.var as var
 *********************************************************************************************
 *********************************************************************************************
 """
+
+q = Queue()
+def Queue():
+	while True:
+		try:
+			if var.ipPing == 1:
+				f = q.get()
+				f()
+			else:
+				print("stop")
+				break
+		except Exception as inst:
+			design.logs("ping-"+str(inst))
 ############################################################################################
 #####	Lancement des différentes alertes										       #####
 ############################################################################################
 def main():
+	threading.Thread(target=Queue, args=()).start()
 	while True:
 		time.sleep(5)
 		try:
@@ -47,14 +62,12 @@ def main():
 def popup():
 
 	try:
-		#time.sleep(10)
+		time.sleep(0)
 		erase = ()
 		ip_hs = ""
 		ip_ok = ""
 		for key, value in var.liste_hs.items():
-			print(str(key)+" - "+str(value)+ " / "+str(var.envoie_alert))
 			if int(value) == int(var.envoie_alert):
-				print("popup")
 				ip_hs = ip_hs + key + "\n "
 				var.liste_hs[key] = 10
 			elif value == 20:
@@ -63,11 +76,11 @@ def popup():
 		for cle in erase:
 			del var.liste_hs[cle]
 		if len(ip_hs) > 0:
-			t = threading.Thread(target=design.alert, args=("les hotes suivants sont HS : \n" + ip_hs,))
-			t.start()
+			mess = "les hotes suivants sont HS : \n"+ip_hs
+			q.put(lambda: threading.Thread(target=design.alert, args=(mess,)).start())
 		if len(ip_ok) > 0:
-			t = threading.Thread(target=design.alert, args=("les hotes suivants sont OK : \n" + ip_ok,))
-			t.start()
+			mess = "les hotes suivants sont OK : \n"+ip_ok
+			q.put(lambda: threading.Thread(target=design.alert, args=(mess,)).start())
 		ip_hs = ""
 		ip_ok = ""
 	except Exception as inst:
@@ -91,13 +104,13 @@ def mail():
 		for key1, value1 in var.liste_mail.items():
 			if int(value1) == int(var.envoie_alert):
 				nom = design.lire_nom(key1)
-				p1 = "<tr><td align=center>" + nom + "</td><td align=center>" + key1 + "</td></tr>"
+				p1 = "<tr><td align=center>" + nom + "</td><td bgcolor="+var.couleur_noir+" align=center>" + key1 + "</td></tr>"
 				ip_hs1 = ip_hs1 + p1
 				var.liste_mail[key1] = 10
 
 			elif value1 == 20:
 				nom = design.lire_nom(key1)
-				p1 = "<tr><td align=center>" + nom + "</td><td align=center>" + key1 + "</td></tr>"
+				p1 = "<tr><td align=center>" + nom + "</td><td bgcolor="+var.couleur_vert+" align=center>" + key1 + "</td></tr>"
 				ip_ok1 = ip_ok1 + p1
 				erase = erase + (str(key1),)
 		for cle in erase:
@@ -120,8 +133,7 @@ def mail():
 			Cordialement,
 			"""
 		if mess == 1:
-			t = threading.Thread(target=fct_thread_mail.envoie_mail, args=(message, sujet))
-			t.start()
+			q.put(lambda: threading.Thread(target=fct_thread_mail.envoie_mail, args=(message, sujet)).start())
 			mess = 0
 		ip_hs = ""
 		ip_ok = ""
@@ -169,8 +181,7 @@ def telegram():
 	
 							"""
 		if mess == 1:
-			t = threading.Thread(target=thread_telegram.main, args=(message,))
-			t.start()
+			q.put(lambda: threading.Thread(target=thread_telegram.main, args=(message,)).start())
 			mess = 0
 		ip_hs = ""
 		ip_ok = ""

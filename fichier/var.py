@@ -1,7 +1,8 @@
 from tkinter import * 
 from tkinter import ttk
+from queue import Queue
 
-version = "1.3.0"
+version = "1.3.1"
 site = 'http://prog.dynag.co'
 ###########   Couleurs ##########
 bg_frame_haut = "#81BEF7"
@@ -17,7 +18,6 @@ couleur_orange = "#ffb845"
 couleur_rouge = "#f97e7e"
 couleur_noir = "#6d6d6d"
 
-chunk = []
 
 ipPing = 0
 popup = 0
