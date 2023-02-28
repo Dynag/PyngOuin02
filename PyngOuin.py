@@ -2,13 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from tkinter import *
-from tkinter.messagebox import *
-import tkinter  as tk
 import fichier.design as design
 import fichier.var as var
 import fichier.fct_ip as fct_ip
 import fichier.fct_ping as fct_ping
-import fichier.param_mail as param_mail
 import fichier.param_gene as param_gene
 import fichier.Thread_aj_ip as Thread_aj_ip
 import os
@@ -19,8 +16,15 @@ from tkinter import ttk
 import math
 import webbrowser
 from tkinter.messagebox import *
+from PIL import ImageTk, Image
 
-
+def queu():
+    while True:
+        try:
+            f = var.q.get()
+            f()
+        except Exception as inst:
+            pass
 
 def maj():
     import fichier.thread_maj as maj1
@@ -252,6 +256,7 @@ if __name__ == "__main__":
     except Exception as e:
         design.logs("MAJ - " + e)
         pass
+    threading.Thread(target=queu, args=()).start()
     ###################################################################################################################
     ###### Définition des frames																				 ######
     ###################################################################################################################
@@ -275,7 +280,11 @@ if __name__ == "__main__":
     ###################################################################################################################
     ###### Frame haut 																							 ######
     ###################################################################################################################
-
+    img = Image.open("fichier/logoP.png")
+    img = img.resize((65, 65), Image.LANCZOS)
+    img = ImageTk.PhotoImage(img)
+    panel = Label(frame_haut, image=img, height=65, width=65, bg=var.bg_frame_haut)
+    panel.grid(row=0, column=0, pady=5, padx=10)
     var.but_lancer_ping = Button(frame_haut, text='Start', padx=15, bg=var.couleur_rouge,
                                  command=lambda: fct_ping.lancerping(frame_haut), height=3).grid(row=0, column=1,
                                                                                                  pady=5)

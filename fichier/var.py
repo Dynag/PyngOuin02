@@ -2,13 +2,15 @@ from tkinter import *
 from tkinter import ttk
 from queue import Queue
 
-version = "1.3.1"
+version = "1.3.2"
 site = 'http://prog.dynag.co'
 ###########   Couleurs ##########
 bg_frame_haut = "#81BEF7"
 bg_frame_mid = "#A9D0F5"
 bg_frame_droit = "#A9D0F5"
 bg_but = "#81BEF7"
+
+q = Queue()
 
 liste_maj = {}
 

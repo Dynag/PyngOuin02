@@ -74,13 +74,16 @@ def popup():
 				ip_ok = ip_ok + key + "\n "
 				erase = erase + (str(key),)
 		for cle in erase:
-			del var.liste_hs[cle]
+			try:
+				del var.liste_hs[cle]
+			except:
+				pass
 		if len(ip_hs) > 0:
 			mess = "les hotes suivants sont HS : \n"+ip_hs
-			q.put(lambda: threading.Thread(target=design.alert, args=(mess,)).start())
+			var.q.put(lambda: threading.Thread(target=design.alert, args=(mess,)).start())
 		if len(ip_ok) > 0:
 			mess = "les hotes suivants sont OK : \n"+ip_ok
-			q.put(lambda: threading.Thread(target=design.alert, args=(mess,)).start())
+			var.q.put(lambda: threading.Thread(target=design.alert, args=(mess,)).start())
 		ip_hs = ""
 		ip_ok = ""
 	except Exception as inst:
@@ -115,7 +118,10 @@ def mail():
 				erase = erase + (str(key1),)
 		for cle in erase:
 			print(cle)
-			del var.liste_mail[cle]
+			try:
+				del var.liste_mail[cle]
+			except Exception as inst:
+				design.logs("fct_thread--" + str(inst))
 
 		if len(ip_hs1) > 0:
 			mess = 1
@@ -133,7 +139,7 @@ def mail():
 			Cordialement,
 			"""
 		if mess == 1:
-			q.put(lambda: threading.Thread(target=fct_thread_mail.envoie_mail, args=(message, sujet)).start())
+			threading.Thread(target=fct_thread_mail.envoie_mail, args=(message, sujet)).start()
 			mess = 0
 		ip_hs = ""
 		ip_ok = ""
@@ -165,7 +171,10 @@ def telegram():
 				erase = erase + (str(key1),)
 		for cle in erase:
 			print(cle)
-			del var.liste_telegram[cle]
+			try:
+				del var.liste_telegram[cle]
+			except:
+				pass
 
 		if len(ip_hs1) > 0:
 			mess = 1
@@ -181,7 +190,7 @@ def telegram():
 	
 							"""
 		if mess == 1:
-			q.put(lambda: threading.Thread(target=thread_telegram.main, args=(message,)).start())
+			threading.Thread(target=thread_telegram.main, args=(message,)).start()
 			mess = 0
 		ip_hs = ""
 		ip_ok = ""

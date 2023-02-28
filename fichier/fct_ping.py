@@ -43,12 +43,8 @@ def list_increment(liste, ip):
 def maj_liste():
 	while True:
 		try:
-			if var.ipPing == 1:
-				f = qq.get()
-				f()
-			else:
-				print("stop")
-				break
+			f = var.q.get()
+			f()
 		except Exception as inst:
 			design.logs("ping-"+str(inst))
 
@@ -102,15 +98,15 @@ def test_ping(ip):
 			message = message + "HS || 200"
 
 			try:
-				qq.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=var.couleur_noir))
-				qq.put(lambda: var.tab_ip.set(ip, column="Latence", value=""))
+				var.q.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=var.couleur_noir))
+				var.q.put(lambda: var.tab_ip.set(ip, column="Latence", value=""))
 			except TclError as inst:
 				design.logs("ping-" + str(inst))
 				pass
 			try:
-				list_increment(var.liste_hs, ip)
-				list_increment(var.liste_mail, ip)
-				list_increment(var.liste_telegram, ip)
+				var.q.put(list_increment(var.liste_hs, ip))
+				var.q.put(list_increment(var.liste_mail, ip))
+				var.q.put(list_increment(var.liste_telegram, ip))
 			except Exception as inst:
 				design.logs("ping-" + str(inst))
 			etat = "HS"
@@ -145,8 +141,8 @@ def test_ping(ip):
 			except Exception as inst:
 				design.logs("ping-"+str(inst))
 			try:
-				qq.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=color))
-				qq.put(lambda: var.tab_ip.set(ip, column="Latence", value=ttot))
+				var.q.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=color))
+				var.q.put(lambda: var.tab_ip.set(ip, column="Latence", value=ttot))
 			except TclError as inst:
 				design.logs("ping-" + str(inst))
 				pass
@@ -240,7 +236,7 @@ def lancerping(fenetre1):
 			threading.Thread(target=thread_recap_mail.main).start()
 		if var.lat == 1:
 			threading.Thread(target=fct_ip.suiviLat, args=()).start()
-		threading.Thread(target=maj_liste, args=()).start()
+		#threading.Thread(target=maj_liste, args=()).start()
 	else:
 		var.but_lancer_ping = Button(fenetre1, text='Start', padx=15, bg=var.couleur_rouge, command=lambda: lancerping(fenetre1), height=3).grid(row=0, column=1, pady=5)
 		var.ipPing = 0

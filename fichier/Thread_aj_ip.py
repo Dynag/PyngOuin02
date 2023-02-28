@@ -44,7 +44,7 @@ def threadIp(ip, tout, i, hote, port):
                 port =""
                 mac = ""
             try:
-                var.tab_ip.insert(parent='', index=i, iid=ip, tag=ip, values=(ip, nom[0] ,mac ,port ,""))
+                var.q.put(lambda: var.tab_ip.insert(parent='', index=i, iid=ip, tag=ip, values=(ip, nom[0] ,mac ,port ,"")))
             except:
                 pass
         else:
@@ -59,14 +59,14 @@ def threadIp(ip, tout, i, hote, port):
                     pass
                 port = fct_ip.check_port(ip, port)
                 try:
-                    var.tab_ip.insert(parent='', index=i, tag=ip, iid=ip, values=(ip, nom[0] ,mac ,port ,""))
+                    var.q.put(lambda: var.tab_ip.insert(parent='', index=i, tag=ip, iid=ip, values=(ip, nom[0] ,mac ,port ,"")))
                 except:
                     pass
         if result == "OK":
 
-            var.tab_ip.tag_configure(tagname=ip, background=var.couleur_vert)
+            var.q.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=var.couleur_vert))
         else:
-            var.tab_ip.tag_configure(tagname=ip, background=var.couleur_rouge)
+            var.q.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=var.couleur_rouge))
     var.threadferme = int(var.threadferme ) +1
     thread = var.threadouvert - var.threadferme
     var.lab_thread.config(text=str(thread ) +" /  " +str(hote))
