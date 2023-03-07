@@ -72,7 +72,7 @@ def openExcel():
                     mac = value[2]
                 if value[3] != None:
                     port = value[3]
-                var.tab_ip.insert(parent='', index=x, iid=value[0], tag=value[0],
+                var.q.put(lambda: var.tab_ip.insert(parent='', index=x, iid=value[0], tag=value[0],
                                   values=(value[0], value[1], mac, port,
-                                          ""))
+                                          "")))
         x += 1

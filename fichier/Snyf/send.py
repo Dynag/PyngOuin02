@@ -51,7 +51,7 @@ def send(type):
                 modele = donn[1]
                 mac = donn[2]
                 try:
-                    var.tab_ip.insert(parent='', index=i, iid=ip, tag=ip, values=(ip, modele, mac, "", "", ""))
+                    var.q.put(lambda: var.tab_ip.insert(parent='', index=i, iid=ip, tag=ip, values=(ip, modele, mac, "", "", "")))
                     i += 1
                 except:
                     print("error "+type)

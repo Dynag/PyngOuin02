@@ -46,7 +46,7 @@ def prepaMail():
 	<td  bgcolor="""+var.bg_frame_haut+""">Latence</tr>
 	"""
 	for row_id in var.tab_ip.get_children():
-		result = var.tab_ip.item(row_id)["values"]
+		result = var.q.put(lambda: var.tab_ip.item(row_id)["values"])
 		color = ""
 		if result[4] == "":
 			color = var.couleur_noir

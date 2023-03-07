@@ -12,33 +12,49 @@ import os
 import fichier.fct_suivi as fct_suivi
 import fichier.fct_graph as fct_graph
 import threading
+from tkinter import *
 from tkinter import ttk
 import math
 import webbrowser
 from tkinter.messagebox import *
 from PIL import ImageTk, Image
+import time
 
+
+
+def threado():
+    while True:
+        print(threading.active_count())
+        time.sleep(0.1)
 def queu():
     while True:
         try:
             f = var.q.get()
             f()
+            #thread = threading.active_count()
+            #var.q.put(lambda: lab_touvert.config(text=thread))
+            if f is None:
+                break
         except Exception as inst:
             pass
+
 
 def maj():
     import fichier.thread_maj as maj1
     threading.Thread(target=maj1.main(), args=()).start()
+
 
 def histo():
     selected_item = var.tab_ip.selection()[0]
     val = selected_item = var.tab_ip.selection()[0]
     fct_suivi.suivitxt(val)
 
+
 def graph():
     selected_item = var.tab_ip.selection()[0]
     val = selected_item = var.tab_ip.selection()[0]
     fct_graph.main(val)
+
 
 def suivi():
     selected_item = var.tab_ip.selection()[0]
@@ -51,6 +67,7 @@ def suivi():
         var.tab_ip.set(selected_item, column="Suivi", value="")
     else:
         var.tab_ip.set(selected_item, column="Suivi", value="X")
+
 
 ###### Récupérer l'ip du PC
 def getentip():
@@ -68,7 +85,6 @@ def Intercepte():
         design.logs("exit - " + str(e))
 
 
-
 ###### Fonction ajouter une IP
 def aj_ip():
     Thread_aj_ip.aj_ip(ent_ip.get(), ent_hote.get(), ent_tout.get(), ent_port.get(), 0)
@@ -77,7 +93,7 @@ def aj_ip():
 ###### Délais entre 2 pings
 def spinDelais():
     fct_ping.stopping(frame_haut)
-    delais = ""
+    var.delais = 5
     nbr = spin_delais.get()
     var.delais = nbr
     if int(nbr) < 60:
@@ -99,6 +115,7 @@ def spinTest():
     nbr = spin_test.get()
     var.envoie_alert = nbr
     print(var.envoie_alert)
+
 
 ###### Sélection d'une ligne
 def item_selected(event):
@@ -133,7 +150,7 @@ def right_clic(event):
         menu_tree = Menu(fenetre, tearoff=0)
         menu_tree.add_command(label="Ouvrir dans le navigateur", command=lambda: open_nav(rowID))
         menu_tree.add_separator()
-        menu_tree.add_command(label="Suivi",  command=suivi)
+        menu_tree.add_command(label="Suivi", command=suivi)
         if suivi1 == "X":
             menu_tree.add_command(label="Historique", command=histo)
             menu_tree.add_command(label="Graphique", command=graph)
@@ -146,9 +163,8 @@ def right_clic(event):
 
 ###### Supprimer un item
 def delete_item():
-
     selected_item = var.tab_ip.selection()[0]
-    val = design.question_box("Attention", "Etes vous sur de vouloir effacer l'ip "+selected_item[0])
+    val = design.question_box("Attention", "Etes vous sur de vouloir effacer l'ip " + selected_item[0])
     if val == True:
         var.tab_ip.delete(selected_item)
         fct_ping.lancerping(frame_haut)
@@ -179,6 +195,7 @@ def isCheckedpopup():
     elif check_popup1.get() == 0:
         var.popup = 0
 
+
 def isCheckedPort():
     if check_port1.get() == 1:
         var.checkPort = True
@@ -203,6 +220,7 @@ def isCheckedRecap():
     elif check_recap1.get() == 0:
         var.recap = 0
 
+
 def isCheckedLat():
     fct_ping.stopping(frame_haut)
     if check_lat1.get() == 1:
@@ -211,6 +229,7 @@ def isCheckedLat():
     elif check_lat1.get() == 0:
         var.lat = 0
 
+
 def isCheckedTelegram():
     fct_ping.stopping(frame_haut)
     if check_telegram1.get() == 1:
@@ -218,6 +237,8 @@ def isCheckedTelegram():
 
     elif check_telegram1.get() == 0:
         var.telegram = 0
+
+
 def isCheckedDb():
     fct_ping.stopping(frame_haut)
     if check_db1.get() == 1:
@@ -225,6 +246,7 @@ def isCheckedDb():
 
     elif check_db1.get() == 0:
         var.db = 0
+
 
 if __name__ == "__main__":
     ###################################################################################################################
@@ -237,8 +259,6 @@ if __name__ == "__main__":
     fenetre.geometry("910x600")
     fenetre.minsize(width=910, height=600)
     fenetre.iconbitmap('fichier/logoP.ico')
-
-
 
     ip_pc = fct_ip.recup_ip()
 
@@ -254,9 +274,10 @@ if __name__ == "__main__":
     try:
         maj()
     except Exception as e:
-        design.logs("MAJ - " + e)
+        design.logs("MAJ - " + str(e))
         pass
     threading.Thread(target=queu, args=()).start()
+    threading.Thread(target=threado, args=()).start()
     ###################################################################################################################
     ###### Définition des frames																				 ######
     ###################################################################################################################
@@ -276,6 +297,8 @@ if __name__ == "__main__":
     var.lab_thread.grid(row=0, column=0, padx=5, pady=5)
     lab_version = Label(master=frame_bas, bg=var.bg_frame_haut, text="PyngOuin version :" + var.version)
     lab_version.grid(row=0, column=1, padx=5, pady=5)
+    lab_touvert = Label(master=frame_bas, bg=var.bg_frame_haut, text="")
+    lab_touvert.grid(row=0, column=2, padx=5, pady=5)
 
     ###################################################################################################################
     ###### Frame haut 																							 ######
@@ -309,14 +332,14 @@ if __name__ == "__main__":
     frame3 = Frame(master=frame_main, bg=var.bg_frame_droit, padx=0, pady=0, width=200, relief=SUNKEN)
     frame3.pack(fill=BOTH, side=LEFT)
     frame3.pack_propagate(False)
-#############################################
-##### Gauche
+    #############################################
+    ##### Gauche
     frameIp = Frame(master=frame1, bg="#FFFFFF", padx=5, pady=0, width=150, height=200, relief=SUNKEN)
     frameIp.pack_propagate(0)
-    frameIp.pack(side=TOP,padx=5, pady=5,fill=X)
+    frameIp.pack(side=TOP, padx=5, pady=5, fill=X)
     frameAutre = Frame(master=frame1, bg="#FFFFFF", padx=5, pady=10, width=150, height=200, relief=SUNKEN)
     frameAutre.pack_propagate(0)
-    frameAutre.pack(side=TOP,padx=5, pady=5,fill=X)
+    frameAutre.pack(side=TOP, padx=5, pady=5, fill=X)
 
     lab_ip = Label(master=frameIp, text="IP", bg="#FFFFFF")
     lab_ip.grid(row=0, column=0, padx=5, pady=5)
@@ -340,12 +363,15 @@ if __name__ == "__main__":
     ent_port.grid(row=6, column=0, padx=5, pady=5)
     ent_port.insert(0, "80,443,3389")
 
-    but_ip = Button(frameIp, text='Valider', width=15, padx=10, command=aj_ip, bg=var.bg_but).grid(row=10, columnspan=2, pady=5)
+    but_ip = Button(frameIp, text='Valider', width=15, padx=10, command=aj_ip, bg=var.bg_but).grid(row=10, columnspan=2,
+                                                                                                   pady=5)
 
-    but_snyf = Button(frameAutre, text='SnyfCam', width=15, padx=10, command=design.snyf, bg=var.bg_but).grid(row=0, padx=12, pady=5)
+    but_snyf = Button(frameAutre, text='SnyfCam', width=15, padx=10, command=design.snyf, bg=var.bg_but).grid(row=0,
+                                                                                                              padx=12,
+                                                                                                              pady=5)
 
-#############################################
-##### Frame centrale
+    #############################################
+    ##### Frame centrale
     tab_ip_scroll = Scrollbar(frame2)
     tab_ip_scroll.pack(side=RIGHT, fill=Y)
     columns = ('IP', 'Nom', 'mac', 'port', 'Latence', 'Suivi')
@@ -353,22 +379,22 @@ if __name__ == "__main__":
                               show='headings')
     for col in columns:
         var.tab_ip.heading(col, text=col, command=lambda _col=col: treeview_sort_column(var.tab_ip, _col, False))
-    var.tab_ip.column("#0", width=0, stretch=FALSE)
-    var.tab_ip.column("IP", anchor=CENTER, stretch=TRUE, width=80)
-    var.tab_ip.column("Nom", anchor=CENTER, stretch=TRUE, width=80)
-    var.tab_ip.column("mac", anchor=CENTER, stretch=TRUE, width=80)
-    var.tab_ip.column("port", anchor=CENTER, stretch=TRUE, width=80)
-    var.tab_ip.column("Latence", anchor=CENTER, width=50, stretch=TRUE)
-    var.tab_ip.column("Suivi", anchor=CENTER, width=30, stretch=FALSE)
-    var.tab_ip.bind('<ButtonRelease-1>', item_selected)
-    var.tab_ip.bind('<3>', right_clic)
-    var.tab_ip.pack(expand=YES, fill=BOTH)
+    var.q.put(lambda: var.tab_ip.column("#0", width=0, stretch=FALSE))
+    var.q.put(lambda: var.tab_ip.column("IP", anchor=CENTER, stretch=TRUE, width=80))
+    var.q.put(lambda: var.tab_ip.column("Nom", anchor=CENTER, stretch=TRUE, width=80))
+    var.q.put(lambda: var.tab_ip.column("mac", anchor=CENTER, stretch=TRUE, width=80))
+    var.q.put(lambda: var.tab_ip.column("port", anchor=CENTER, stretch=TRUE, width=80))
+    var.q.put(lambda: var.tab_ip.column("Latence", anchor=CENTER, width=50, stretch=TRUE))
+    var.q.put(lambda: var.tab_ip.column("Suivi", anchor=CENTER, width=30, stretch=FALSE))
+    var.q.put(lambda: var.tab_ip.bind('<ButtonRelease-1>', item_selected))
+    var.q.put(lambda: var.tab_ip.bind('<3>', right_clic))
+    var.q.put(lambda: var.tab_ip.pack(expand=YES, fill=BOTH))
 
-### Frame Droit
+    ### Frame Droit
 
     frameNom = Frame(master=frame3, bg="#FFFFFF", padx=5, pady=5, width=180, relief=SUNKEN)
     frameNom.pack_propagate(0)
-    frameNom.pack(side=TOP,padx=5, pady=5,fill=X)
+    frameNom.pack(side=TOP, padx=5, pady=5, fill=X)
 
     ent_nom = Entry(frameNom, text="")
     ent_nom.grid_propagate(0)
@@ -382,7 +408,7 @@ if __name__ == "__main__":
     frametab2.pack_propagate(0)
     frametab2.pack(side=TOP)
     frameDelais = Frame(master=frame3, bg="#FFFFFF", padx=5, pady=5, width=180, relief=SUNKEN)
-    frameDelais.pack(side=TOP,padx=5, pady=5,fill=X)
+    frameDelais.pack(side=TOP, padx=5, pady=5, fill=X)
 
     lab_delais = Label(master=frameDelais, text="Délais entre 2 pings", bg="#FFFFFF", width=20)
     lab_delais.grid(row=0, column=0, padx=5, pady=5, columnspan=3)
@@ -395,7 +421,6 @@ if __name__ == "__main__":
     lab_test.grid(row=2, column=0, padx=0, pady=5)
     spin_test = Spinbox(frameDelais, from_=1, to=10, width=5, command=spinTest)
     spin_test.grid(row=2, column=1, padx=0, pady=5)
-
 
     check_popup = Checkbutton(frameDelais, text='Popup', variable=check_popup1, onvalue=1, offvalue=0, bg="#FFFFFF",
                               command=isCheckedpopup)
@@ -416,8 +441,8 @@ if __name__ == "__main__":
     check_recap.grid(row=6, columnspan=3, padx=0, pady=5, sticky='w')
 
     check_db = Checkbutton(frameDelais, text='DB Externe', variable=check_db1, onvalue=1, offvalue=0,
-                              bg="#FFFFFF",
-                              command=isCheckedDb)
+                           bg="#FFFFFF",
+                           command=isCheckedDb)
     check_db.grid(row=7, columnspan=3, padx=0, pady=5, sticky='w')
 
     ########### Effacer #########################################
@@ -436,6 +461,7 @@ if __name__ == "__main__":
     # ______________________________________________________________
     fenetre.protocol("WM_DELETE_WINDOW", Intercepte)
     try:
-        fenetre.mainloop()
+        while 1:
+            fenetre.mainloop()
     except Exception as e:
-        design.logs("Impossible d'ouvrir la fenetre principale - "+e)
+        design.logs("Impossible d'ouvrir la fenetre principale - " + e)

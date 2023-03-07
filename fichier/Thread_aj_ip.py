@@ -4,19 +4,41 @@ import fichier.design as design
 import threading
 import time
 
-###########################################################################################
+
+
+
+
+
+################s###########################################################################
 #####   Fonction principale d'ajout de ip   										  #####
 ###########################################################################################
+
+def labThread(value):
+    var.progress['value'] = value
+
+def worker(q, thread_no):
+    try:
+        while True:
+            item = q.get()
+            if item is None:
+                break
+            q.task_done()
+    except Exception as e:
+        design.logs("fct_ping - " + str(e))
+
+
+
+
 def threadIp(ip, tout, i, hote, port):
-    var.progress.grid(row=0, column=2, padx=5, pady=5)
-    var.threadouvert = int(var.threadouvert ) +1
+    var.q.put(lambda: var.progress.grid(row=0, column=2, padx=5, pady=5))
+    var.threadouvert = int(var.threadouvert) + 1
     ipexist = False
     for parent in var.tab_ip.get_children():
         result = var.tab_ip.item(parent)["values"]
         ip1 = result[0]
 
         if ip1 == ip:
-            threading.Thread(target=design.alert, args=("L'adresse  " +ip +" existe déja",)).start()
+            threading.Thread(target=design.alert, args=("L'adresse  " + ip + " existe déja",)).start()
             ipexist = True
             pass
         else:
@@ -24,15 +46,15 @@ def threadIp(ip, tout, i, hote, port):
     if ipexist == False:
         time.sleep(0)
         result = fct_ip.ipPing(ip)
-        nom =("")
-        mac =""
+        nom = ("")
+        mac = ""
 
         if tout == "Tout":
             if result == "OK":
                 try:
                     nom = fct_ip.socket.gethostbyaddr(ip)
                 except:
-                    nom =(ip ,"")
+                    nom = (ip, "")
                 try:
                     mac = fct_ip.getmac(ip)
                 except:
@@ -40,11 +62,12 @@ def threadIp(ip, tout, i, hote, port):
                 port = fct_ip.check_port(ip, port)
 
             else:
-                nom =("" ,"")
-                port =""
+                nom = ("", "")
+                port = ""
                 mac = ""
             try:
-                var.q.put(lambda: var.tab_ip.insert(parent='', index=i, iid=ip, tag=ip, values=(ip, nom[0] ,mac ,port ,"")))
+                var.q.put(
+                    lambda: var.tab_ip.insert(parent='', index=i, iid=ip, tag=ip, values=(ip, nom[0], mac, port, "")))
             except:
                 pass
         else:
@@ -52,31 +75,34 @@ def threadIp(ip, tout, i, hote, port):
                 try:
                     nom = fct_ip.socket.gethostbyaddr(ip)
                 except:
-                    nom =(ip ,"")
+                    nom = (ip, "")
                 try:
                     mac = fct_ip.getmac(ip)
                 except:
                     pass
                 port = fct_ip.check_port(ip, port)
                 try:
-                    var.q.put(lambda: var.tab_ip.insert(parent='', index=i, tag=ip, iid=ip, values=(ip, nom[0] ,mac ,port ,"")))
+                    var.q.put(lambda: var.tab_ip.insert(parent='', index=i, tag=ip, iid=ip,
+                                                        values=(ip, nom[0], mac, port, "")))
                 except:
                     pass
         if result == "OK":
 
             var.q.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=var.couleur_vert))
         else:
-            var.q.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=var.couleur_rouge))
-    var.threadferme = int(var.threadferme ) +1
+            var.q.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=var.couleur_noir))
+    var.threadferme = int(var.threadferme) + 1
     thread = var.threadouvert - var.threadferme
-    var.lab_thread.config(text=str(thread ) +" /  " +str(hote))
+    var.q.put(lambda: var.lab_thread.config(text=str(thread) + " /  " + str(hote)))
 
-    progre = ((int(hote ) -int(thread) ) /int(hote) ) *100
-    var.progress['value'] = progre
+    progre = ((int(hote) - int(thread)) / int(hote)) * 100
+    var.q.put(lambda: labThread(progre))
 
-    if thread == 0:
-        var.progress.grid_forget()
-        design.alert("Le scan est terminé")
+    if thread <= 0:
+        var.q.put(lambda: var.progress.grid_forget())
+        var.q.put(lambda: var.lab_thread.config(text=""))
+        var.q.put(lambda: design.alert("Le scan est terminé"))
+
 
 ###########################################################################################
 #####   Préparation de l'ajout      												  #####
@@ -99,5 +125,4 @@ def aj_ip(ip, hote, tout, port, mac):
             ip2 = ip2 + str(ip4) + "." + str(u)
             u = u + 1
         t = i
-        t = threading.Thread(target=threadIp, args=(ip2, tout, i, hote, port))
-        t.start()
+        threading.Thread(target=threadIp, args=(ip2, tout, i, hote, port)).start()

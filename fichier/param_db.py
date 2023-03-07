@@ -37,7 +37,7 @@ def main():
 				pickle.dump(variables, fichierSauvegarde)
 				fichierSauvegarde.close()
 			except Exception as inst:
-				design.logs(inst)
+				design.logs(str(inst))
 			fenetre1.destroy()
 			return
 		except Exception as inst:
