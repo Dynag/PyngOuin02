@@ -65,14 +65,17 @@ def openExcel():
                 else:
                     ipexist = False
             if ipexist == False:
-                print(value[2])
                 mac = ""
                 port = ""
+                if value[1] != None:
+                    nom = value[1]
+                else:
+                    nom = value[0]
                 if value[2] != None:
                     mac = value[2]
                 if value[3] != None:
                     port = value[3]
-                var.q.put(lambda: var.tab_ip.insert(parent='', index=x, iid=value[0], tag=value[0],
-                                  values=(value[0], value[1], mac, port,
-                                          "")))
+                var.tab_ip.insert(parent='', index=x, tag=value[0], iid=value[0],
+                                                values=(value[0], nom, mac, port, ""))
+            #var.tab_ip.insert(parent='', index=x, iid=value[0], tag=value[0], values=(value[0], value[1], mac, port))
         x += 1

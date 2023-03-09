@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tkinter import *
 import fichier.design as design
 import fichier.var as var
 import fichier.fct_ip as fct_ip
@@ -21,18 +20,20 @@ from PIL import ImageTk, Image
 import time
 
 
-
 def threado():
     while True:
         print(threading.active_count())
         time.sleep(0.1)
+
+
 def queu():
     while True:
+        time.sleep(0.01)
         try:
             f = var.q.get()
             f()
-            #thread = threading.active_count()
-            #var.q.put(lambda: lab_touvert.config(text=thread))
+            # thread = threading.active_count()
+            # var.q.put(lambda: lab_touvert.config(text=thread))
             if f is None:
                 break
         except Exception as inst:
@@ -165,7 +166,7 @@ def right_clic(event):
 def delete_item():
     selected_item = var.tab_ip.selection()[0]
     val = design.question_box("Attention", "Etes vous sur de vouloir effacer l'ip " + selected_item[0])
-    if val == True:
+    if val:
         var.tab_ip.delete(selected_item)
         fct_ping.lancerping(frame_haut)
 
@@ -274,10 +275,10 @@ if __name__ == "__main__":
     try:
         maj()
     except Exception as e:
-        design.logs("MAJ - " + str(e))
+        # design.logs("MAJ - " + str(e))
         pass
     threading.Thread(target=queu, args=()).start()
-    threading.Thread(target=threado, args=()).start()
+    # threading.Thread(target=threado, args=()).start()
     ###################################################################################################################
     ###### Définition des frames																				 ######
     ###################################################################################################################
@@ -464,4 +465,4 @@ if __name__ == "__main__":
         while 1:
             fenetre.mainloop()
     except Exception as e:
-        design.logs("Impossible d'ouvrir la fenetre principale - " + e)
+        design.logs("Impossible d'ouvrir la fenetre principale - " + str(e))
