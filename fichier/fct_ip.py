@@ -88,7 +88,7 @@ def suiviLat():
 				l = [(str(var.tab_ip.item(k)["values"][column_index]), k) for k in var.tab_ip.get_children()]
 				l.sort(key=lambda t: t[0], reverse=True)
 				for index, (val, k) in enumerate(l):
-					var.tab_ip.move(k, '', index)
+					var.q.put(lambda: var.tab_ip.move(k, '', index))
 			else:
 				return
 			time.sleep(1)

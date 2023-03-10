@@ -22,15 +22,18 @@ def getxml():
 
 
 def recupDerVer():
-    xml = getxml()
-    i = 0;
-    for val in xml["changelog"]["version"]:
-        if i == 0:
-            verion2 = val["versio"]
-            i += 1
-    version1 = verion2.split(".")
-    version = version1[0] + version1[1] + version1[2]
-    return version
+    try:
+        xml = getxml()
+        i = 0;
+        for val in xml["changelog"]["version"]:
+            if i == 0:
+                verion2 = val["versio"]
+                i += 1
+        version1 = verion2.split(".")
+        version = version1[0] + version1[1] + version1[2]
+        return version
+    except:
+        pass
 
 
 def testVersion():
@@ -49,5 +52,8 @@ def testVersion():
 
 
 def main():
-    testVersion()
-    threading.currentThread().join()
+    try:
+        testVersion()
+    except:
+        pass
+    #threading.currentThread().join()

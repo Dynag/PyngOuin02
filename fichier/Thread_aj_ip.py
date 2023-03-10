@@ -3,7 +3,9 @@ import fichier.var as var
 import fichier.design as design
 import threading
 import time
-
+from queue import Queue
+import multiprocessing
+import queue
 
 
 
@@ -108,6 +110,27 @@ def threadIp(ip, tout, i, hote, port):
 #####   Préparation de l'ajout      												  #####
 ###########################################################################################
 def aj_ip(ip, hote, tout, port, mac):
+    nbrworker = multiprocessing.cpu_count()
+    num_worker_threads = nbrworker
+    q = queue.Queue()
+    threads = []
+    for i in range(num_worker_threads):
+        t = threading.Thread(target=worker, args=(q, i,), daemon=True)
+        t.start()
+        threads.append(t)
+
+    for parent in var.tab_ip.get_children():
+        result = var.tab_ip.item(parent)["values"]
+        ip1 = result[0]
+        q.put(ip1)
+    # block until all tasks are done
+    q.join()
+    # stop workers
+    for i in range(num_worker_threads):
+        q.put(None)
+    for t in threads:
+        t.join()
+
     ip1 = ip.split(".")
     u = 0
     i = 0
@@ -125,4 +148,4 @@ def aj_ip(ip, hote, tout, port, mac):
             ip2 = ip2 + str(ip4) + "." + str(u)
             u = u + 1
         t = i
-        threading.Thread(target=threadIp, args=(ip2, tout, i, hote, port)).start()
+        q.put(threading.Thread(target=threadIp, args=(ip2, tout, i, hote, port)).start())

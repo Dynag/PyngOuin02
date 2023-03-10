@@ -20,24 +20,21 @@ from PIL import ImageTk, Image
 import time
 
 
-def threado():
-    while True:
-        print(threading.active_count())
-        time.sleep(0.1)
 
 
 def queu():
     while True:
         time.sleep(0.01)
         try:
-            f = var.q.get()
-            f()
-            # thread = threading.active_count()
-            # var.q.put(lambda: lab_touvert.config(text=thread))
-            if f is None:
-                break
-        except Exception as inst:
-            pass
+            try:
+                f = var.q.get()
+                f()
+                if f is None:
+                    break
+            except Exception as inst:
+                pass
+        except TclError as inst:
+            design.logs("ping-" + str(inst))
 
 
 def maj():
@@ -52,8 +49,7 @@ def histo():
 
 
 def graph():
-    selected_item = var.tab_ip.selection()[0]
-    val = selected_item = var.tab_ip.selection()[0]
+    val = var.tab_ip.selection()[0]
     fct_graph.main(val)
 
 
@@ -275,7 +271,7 @@ if __name__ == "__main__":
     try:
         maj()
     except Exception as e:
-        # design.logs("MAJ - " + str(e))
+        design.logs("MAJ - " + str(e))
         pass
     threading.Thread(target=queu, args=()).start()
     # threading.Thread(target=threado, args=()).start()
@@ -309,9 +305,9 @@ if __name__ == "__main__":
     img = ImageTk.PhotoImage(img)
     panel = Label(frame_haut, image=img, height=65, width=65, bg=var.bg_frame_haut)
     panel.grid(row=0, column=0, pady=5, padx=10)
-    var.but_lancer_ping = Button(frame_haut, text='Start', padx=15, bg=var.couleur_rouge,
-                                 command=lambda: fct_ping.lancerping(frame_haut), height=3).grid(row=0, column=1,
-                                                                                                 pady=5)
+    Button(frame_haut, text='Start', padx=15, bg=var.couleur_rouge,
+           command=lambda: fct_ping.lancerping(frame_haut), height=3).grid(row=0, column=1,
+                                                                           pady=5)
     var.progress = ttk.Progressbar(frame_haut, orient=HORIZONTAL,
                                    length=250, mode='determinate')
     var.progress.grid(row=0, column=2, padx=5, pady=5)
@@ -364,12 +360,12 @@ if __name__ == "__main__":
     ent_port.grid(row=6, column=0, padx=5, pady=5)
     ent_port.insert(0, "80,443,3389")
 
-    but_ip = Button(frameIp, text='Valider', width=15, padx=10, command=aj_ip, bg=var.bg_but).grid(row=10, columnspan=2,
-                                                                                                   pady=5)
+    Button(frameIp, text='Valider', width=15, padx=10, command=aj_ip, bg=var.bg_but).grid(row=10, columnspan=2,
+                                                                                          pady=5)
 
-    but_snyf = Button(frameAutre, text='SnyfCam', width=15, padx=10, command=design.snyf, bg=var.bg_but).grid(row=0,
-                                                                                                              padx=12,
-                                                                                                              pady=5)
+    Button(frameAutre, text='SnyfCam', width=15, padx=10, command=design.snyf, bg=var.bg_but).grid(row=0,
+                                                                                                   padx=12,
+                                                                                                   pady=5)
 
     #############################################
     ##### Frame centrale
@@ -465,4 +461,4 @@ if __name__ == "__main__":
         while 1:
             fenetre.mainloop()
     except Exception as e:
-        design.logs("Impossible d'ouvrir la fenetre principale - " + str(e))
+        design.logs("Impossible d'ouvrir la fenetre principale - " + e)

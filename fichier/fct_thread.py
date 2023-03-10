@@ -46,12 +46,12 @@ def main():
                         design.logs("fct_thread -" + str(inst))
                 if var.mail == 1:
                     try:
-                        var.q.put(lambda: threading.Thread(target=mail, args=()).start())
+                        threading.Thread(target=mail, args=()).start()
                     except Exception as inst:
                         design.logs("fct_thread -" + str(inst))
                 if var.telegram == 1:
                     try:
-                        var.q.put(lambda: threading.Thread(target=telegram, args=()).start())
+                        threading.Thread(target=telegram, args=()).start()
                     except Exception as inst:
                         design.logs("fct_thread -" + str(inst))
 

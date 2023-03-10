@@ -1,8 +1,6 @@
 import fichier.var as var
 import fichier.design as design
 import fichier.param_mail_recap as param_mail_recap
-import fichier.fct_thread_mail as fct_thread_mail
-import threading
 import time
 import fichier.fct_thread_mail as fct_thread_mail
 from datetime import datetime
@@ -46,7 +44,7 @@ def prepaMail():
 	<td  bgcolor="""+var.bg_frame_haut+""">Latence</tr>
 	"""
 	for row_id in var.tab_ip.get_children():
-		result = var.q.put(lambda: var.tab_ip.item(row_id)["values"])
+		result = var.tab_ip.item(row_id)["values"]
 		color = ""
 		if result[4] == "":
 			color = var.couleur_noir

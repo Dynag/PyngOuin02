@@ -24,7 +24,6 @@ import fichier.design as design
 *********************************************************************************************
 """
 q = Queue()
-qq = Queue()
 
 
 ###########################################################################################
@@ -42,8 +41,6 @@ def list_increment(liste, ip):
             liste[ip] = 1
     except Exception as inst:
         design.logs("ping-" + str(inst))
-
-
 
 
 ###########################################################################################
@@ -73,102 +70,106 @@ def db_ext(ip, nom, etat, latence):
 ###########################################################################################
 def test_ping(ip):
     try:
-        time.sleep(0.01)
-        result = ping.ping(ip, size=10, count=1)
-        etat = ""
-        latence = ""
-        nom = ""
-
-        selected_item = ip
-        valeur = var.q.put(lambda: var.tab_ip.item(selected_item)["values"])
         try:
-            suivi = valeur[6]
-            nom = valeur[1]
-        except:
-            if os.path.exists('suivi/' + ip + '.txt'):
-                fct_suivi.supprimer(ip)
-            suivi = ""
-
-        date = str(datetime.datetime.now())
-        message = date + " || "
-        if var.ipPing == 0:
-            return
-        if result.rtt_avg_ms == int(2000):
-            message = message + "HS || 200"
-
-            try:
-                var.q.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=var.couleur_noir))
-                var.q.put(lambda: var.tab_ip.delete(ip, column="Latence"))
-                var.q.put(lambda: var.tab_ip.set(ip, column="Latence", value=""))
-            except TclError as inst:
-                design.logs("ping-" + str(inst))
-                pass
-            try:
-                var.q.put(list_increment(var.liste_hs, ip))
-                var.q.put(list_increment(var.liste_mail, ip))
-                var.q.put(list_increment(var.liste_telegram, ip))
-            except Exception as inst:
-                design.logs("ping-" + str(inst))
-            etat = "HS"
+            time.sleep(0.01)
+            result = ping.ping(ip, size=10, count=1)
+            etat = ""
             latence = ""
+            nom = ""
 
-        else:
-            message = message + " OK || " + str(result.rtt_avg_ms) + " ms"
-            if result.rtt_avg_ms < 2:
-                color = var.couleur_vert
-            elif result.rtt_avg_ms < 10:
-                color = var.couleur_jaune
-            elif result.rtt_avg_ms < 50:
-                color = var.couleur_orange
-            else:
-                color = var.couleur_rouge
+            selected_item = ip
+            valeur = var.q.put(lambda: var.tab_ip.item(selected_item)["values"])
+            try:
+                suivi = valeur[6]
+                nom = valeur[1]
+            except:
+                if os.path.exists('suivi/' + ip + '.txt'):
+                    fct_suivi.supprimer(ip)
+                suivi = ""
 
-            if result.rtt_avg_ms < 1:
-                ttot = "<1 ms"
+            date = str(datetime.datetime.now())
+            message = date + " || "
+            if var.ipPing == 0:
+                return
+            if result.rtt_avg_ms == int(2000):
+                message = message + "HS || 200"
+
+                try:
+                    var.q.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=var.couleur_noir))
+                    var.q.put(lambda: var.tab_ip.delete(ip, column="Latence"))
+                    var.q.put(lambda: var.tab_ip.set(ip, column="Latence", value=""))
+                except TclError as inst:
+                    design.logs("ping-" + str(inst))
+                    pass
+                try:
+                    var.q.put(list_increment(var.liste_hs, ip))
+                    var.q.put(list_increment(var.liste_mail, ip))
+                    var.q.put(list_increment(var.liste_telegram, ip))
+                except Exception as inst:
+                    design.logs("ping-" + str(inst))
+                etat = "HS"
+                latence = ""
+
             else:
-                ttot = str(result.rtt_avg_ms) + " ms"
-            try:
-                list_ok(var.liste_hs, ip)
-            except Exception as inst:
-                design.logs("ping-" + str(inst))
-            try:
-                list_ok(var.liste_mail, ip)
-            except Exception as inst:
-                design.logs("ping-" + str(inst))
-            try:
-                list_ok(var.liste_telegram, ip)
-            except Exception as inst:
-                design.logs("ping-" + str(inst))
-            try:
-                var.q.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=color))
-                var.q.put(lambda: var.tab_ip.delete(ip, column="Latence"))
-                var.q.put(lambda: var.tab_ip.set(ip, column="Latence", value=ttot))
-            except TclError as inst:
-                design.logs("ping-" + str(inst))
-                pass
-            etat = "OK"
-            latence = ttot
-        message = message + "\n"
-        if var.db == 1:
-            var.q.put(lambda: db_ext(ip, nom, etat, latence))
-        if suivi == "X":
-            var.q.put(lambda: fct_suivi.ecrire(ip, message))
-        return message
-    except Exception as e:
-        design.logs("fct_ping - " + str(e))
+                message = message + " OK || " + str(result.rtt_avg_ms) + " ms"
+                if result.rtt_avg_ms < 2:
+                    color = var.couleur_vert
+                elif result.rtt_avg_ms < 10:
+                    color = var.couleur_jaune
+                elif result.rtt_avg_ms < 50:
+                    color = var.couleur_orange
+                else:
+                    color = var.couleur_rouge
+
+                if result.rtt_avg_ms < 1:
+                    ttot = "<1 ms"
+                else:
+                    ttot = str(result.rtt_avg_ms) + " ms"
+                try:
+                    list_ok(var.liste_hs, ip)
+                except Exception as inst:
+                    design.logs("ping-" + str(inst))
+                try:
+                    list_ok(var.liste_mail, ip)
+                except Exception as inst:
+                    design.logs("ping-" + str(inst))
+                try:
+                    list_ok(var.liste_telegram, ip)
+                except Exception as inst:
+                    design.logs("ping-" + str(inst))
+                try:
+                    var.q.put(lambda: var.tab_ip.tag_configure(tagname=ip, background=color))
+                    var.q.put(lambda: var.tab_ip.delete(ip, column="Latence"))
+                    var.q.put(lambda: var.tab_ip.set(ip, column="Latence", value=ttot))
+                except TclError as inst:
+                    design.logs("ping-" + str(inst))
+                    pass
+                etat = "OK"
+                latence = ttot
+            message = message + "\n"
+            if var.db == 1:
+                var.q.put(lambda: db_ext(ip, nom, etat, latence))
+            if suivi == "X":
+                var.q.put(lambda: fct_suivi.ecrire(ip, message))
+            return message
+        except Exception as e:
+            design.logs("fct_ping - " + str(e))
+    except TclError as inst:
+        design.logs("ping-" + str(inst))
 
 
 ###########################################################################################
 #####				Lancement des pings sur les workers                  			  #####
 ###########################################################################################
-def worker(q, thread_no):
+def worker(q_attente, thread_no):
     try:
         while True:
-            item = q.get()
+            item = q_attente.get()
             if item is None:
                 break
-            mess = test_ping(str(item))
-            q.task_done()
+            test_ping(str(item))
+            print(thread_no)
+            q_attente.task_done()
     except Exception as e:
         design.logs("fct_ping - " + str(e))
 
@@ -193,7 +194,6 @@ def threadPing():
             startfct = time.time() * 1000.0
             if var.ipPing == 1:
                 nbrworker = multiprocessing.cpu_count()
-                print(str(nbrworker))
                 num_worker_threads = nbrworker
                 q = queue.Queue()
                 threads = []
@@ -218,7 +218,9 @@ def threadPing():
                 if tpsfct < int(var.delais):
                     time.sleep(int(var.delais) - tpsfct)
             else:
+                print("STOP")
                 break
+
         except Exception as e:
             design.logs("fct_ping - " + str(e))
 
@@ -230,7 +232,8 @@ def lancerping(fenetre1):
     if var.ipPing == 0:
         fct_suivi.creerDossier()
         var.ipPing = 1
-        var.but_lancer_ping = Button(fenetre1, text='Stop', padx=15, bg=var.couleur_vert, command=lambda: lancerping(fenetre1), height=3).grid(row=0, column=1, pady=5)
+        Button(fenetre1, text='Stop', padx=15, bg=var.couleur_vert,
+               command=lambda: lancerping(fenetre1), height=3).grid(row=0, column=1, pady=5)
         threading.Thread(target=threadPing).start()
         if var.popup == 1 or var.mail == 1 or var.telegram == 1:
             var.q.put(lambda: threading.Thread(target=fct_thread_popup.main).start())
@@ -239,8 +242,8 @@ def lancerping(fenetre1):
         if var.lat == 1:
             var.q.put(lambda: threading.Thread(target=fct_ip.suiviLat, args=()).start())
     else:
-        var.but_lancer_ping = Button(fenetre1, text='Start', padx=15, bg=var.couleur_rouge,
-                                     command=lambda: lancerping(fenetre1), height=3).grid(row=0, column=1, pady=5)
+        Button(fenetre1, text='Start', padx=15, bg=var.couleur_rouge,
+               command=lambda: lancerping(fenetre1), height=3).grid(row=0, column=1, pady=5)
         var.ipPing = 0
     return
 
@@ -252,6 +255,7 @@ def stopping(fenetre1):
     if var.ipPing == 0:
         return
     else:
-        var.but_lancer_ping = Button(fenetre1, text='Start', padx=10, bg=var.couleur_rouge, command=lambda: lancerping(fenetre1), height=3).grid(row=0, column=1, pady=5)
+        var.but_lancer_ping = Button(fenetre1, text='Start', padx=10, bg=var.couleur_rouge,
+                                     command=lambda: lancerping(fenetre1), height=3).grid(row=0, column=1, pady=5)
         var.ipPing = 0
     return
