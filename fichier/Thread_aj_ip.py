@@ -61,7 +61,8 @@ def threadIp(ip, tout, i, hote, port):
                     mac = fct_ip.getmac(ip)
                 except:
                     pass
-                port = fct_ip.check_port(ip, port)
+                if port != "":
+                    port = fct_ip.check_port(ip, port)
 
             else:
                 nom = ("", "")

@@ -135,7 +135,7 @@ def right_clic(event):
     selected_item = var.tab_ip.selection()[0]
     suivi1 = ""
     try:
-        suivi1 = var.tab_ip.item(selected_item)["values"][6]
+        suivi1 = var.tab_ip.item(selected_item)["values"][5]
     except:
         pass
     rowID = var.tab_ip.identify('item', event.x, event.y)
@@ -358,7 +358,7 @@ if __name__ == "__main__":
     lab_port.grid(row=5, column=0, padx=5, pady=5)
     ent_port = Entry(frameIp, text="80")
     ent_port.grid(row=6, column=0, padx=5, pady=5)
-    ent_port.insert(0, "80,443,3389")
+
 
     Button(frameIp, text='Valider', width=15, padx=10, command=aj_ip, bg=var.bg_but).grid(row=10, columnspan=2,
                                                                                           pady=5)

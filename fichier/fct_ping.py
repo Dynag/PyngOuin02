@@ -76,16 +76,18 @@ def test_ping(ip):
             etat = ""
             latence = ""
             nom = ""
+            suivi = ""
 
             selected_item = ip
-            valeur = var.q.put(lambda: var.tab_ip.item(selected_item)["values"])
+            valeur = var.tab_ip.item(selected_item)["values"]
             try:
-                suivi = valeur[6]
+                suivi = str(valeur[5])
                 nom = valeur[1]
-            except:
+            except Exception as inst:
+                design.logs("ping-" + str(inst))
+            if suivi != "X":
                 if os.path.exists('suivi/' + ip + '.txt'):
                     fct_suivi.supprimer(ip)
-                suivi = ""
 
             date = str(datetime.datetime.now())
             message = date + " || "
